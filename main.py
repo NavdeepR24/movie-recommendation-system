@@ -15,6 +15,26 @@ def fetch_poster(movie_id):
     data=response.json()
     return "https://image.tmdb.org/t/p/w500/"+data['poster_path']
 
+
+# def fetch_poster(movie_id: int) -> str:
+#     url = f"{TMDB_BASE}/movie/{movie_id}?api_key={TMDB_API_KEY}"
+#     r = requests.get(url)
+#     if r.status_code == 200:
+#         data = r.json()
+#         path = data.get("poster_path")
+#         if path:
+#             return POSTER_BASE + path
+#     return "https://via.placeholder.com/500x750?text=No+Poster"
+#
+#
+# def fetch_movie_details(movie_id: int) -> dict:
+#     """Return full movie details + credits + videos from TMDb."""
+#     details = requests.get(
+#         f"{TMDB_BASE}/movie/{movie_id}",
+#         params={"api_key": TMDB_API_KEY, "append_to_response": "credits,videos,keywords"}
+#     ).json()
+#     return details
+
 def recommend (movie):
     movie_index=movies[movies['title'] == movie].index[0]
     distances=similarity [movie_index]
