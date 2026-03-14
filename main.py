@@ -45,32 +45,32 @@ def fetch_movie_details(movie_id: int) -> dict:
     ).json()
     return details
 
-# Recommender logic
-# def recommend(movie_title: str):
-#     """Return 5 (name, poster_url, tmdb_id) tuples."""
-#     idx   = movies[movies['title'] == movie_title].index[0]
-#     dists = sorted(enumerate(similarity[idx]), reverse=True, key=lambda x: x[1])
-#     names, posters, ids = [], [], []
-#     for i, _ in dists[1:6]:
-#         row = movies.iloc[i]
-#         mid = row['movie_id']
-#         names.append(row['title'])
-#         posters.append(fetch_poster(mid))
-#         ids.append(mid)
-#     return names, posters, ids
+#Recommender logic
+def recommend(movie_title):
+    """Return 5 (name, poster_url, tmdb_id) tuples."""
+    idx   = movies[movies['title'] == movie_title].index[0]
+    dists = sorted(enumerate(similarity[idx]), reverse=True, key=lambda x: x[1])
+    names, posters, ids = [], [], []
+    for i, _ in dists[1:6]:
+        row = movies.iloc[i]
+        mid = row['movie_id']
+        names.append(row['title'])
+        posters.append(fetch_poster(mid))
+        ids.append(mid)
+    return names, posters, ids
 
-def recommend (movie):
-    movie_index=movies[movies['title'] == movie].index[0]
-    distances=similarity [movie_index]
-    movies_list_sorted = sorted(list(enumerate (distances)), reverse=True, key=lambda x: x[1]) [1:6]
-
-    recommended_movies=[]
-    recommended_movies_poster=[]
-    for i in movies_list_sorted:
-        movie_id=movies.iloc[i[0]].movie_id
-        recommended_movies.append(movies.iloc[i[0]].title)
-        recommended_movies_poster.append(fetch_poster(movie_id))
-    return recommended_movies,recommended_movies_poster
+# def recommend (movie):
+#     movie_index=movies[movies['title'] == movie].index[0]
+#     distances=similarity [movie_index]
+#     movies_list_sorted = sorted(list(enumerate (distances)), reverse=True, key=lambda x: x[1]) [1:6]
+#
+#     recommended_movies=[]
+#     recommended_movies_poster=[]
+#     for i in movies_list_sorted:
+#         movie_id=movies.iloc[i[0]].movie_id
+#         recommended_movies.append(movies.iloc[i[0]].title)
+#         recommended_movies_poster.append(fetch_poster(movie_id))
+#     return recommended_movies,recommended_movies_poster
 
 st.title('Movie Recommender System')
 selected_movie_name=st.selectbox(
