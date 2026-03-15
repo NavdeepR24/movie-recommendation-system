@@ -184,10 +184,6 @@ def select_movie(movie_id, movie_title):
     st.session_state.selected_movie_title = movie_title
 
 def show_main_page():
-    st.components.v1.html(
-        "<script>window.parent.document.querySelector('section.main').scrollTo(0, 0);</script>",
-        height=0
-    )
     st.title("🎬 Movie Recommender System")
 
     selected = st.selectbox(
