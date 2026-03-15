@@ -70,10 +70,6 @@ def go_back():
 
 # Details Page
 def show_detail_page(movie_id: int, movie_title: str):
-    st.components.v1.html(
-        "<script>window.parent.document.querySelector('section.main').scrollTo(0, 0);</script>",
-        height=0
-    )
     st.button("← Back to Search", on_click=go_back)
 
     details = fetch_movie_details(movie_id)
