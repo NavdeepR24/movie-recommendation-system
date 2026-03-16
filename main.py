@@ -4,7 +4,6 @@ import pandas as pd
 import requests
 from dotenv import load_dotenv
 import os
-import streamlit.components.v1 as components
 
 load_dotenv()
 
@@ -67,6 +66,13 @@ if 'selected_movie_title' not in st.session_state:
 def go_back():
     st.session_state.selected_movie_id = None
     st.session_state.selected_movie_title = None
+
+def go_to_movie():
+    if st.session_state.movie_selectbox:
+        movie_row = movies[movies['title'] == st.session_state.movie_selectbox].iloc[0]
+        st.session_state.selected_movie_id = int(movie_row['movie_id'])
+        st.session_state.selected_movie_title = st.session_state.movie_selectbox
+        st.session_state.scroll_to_top = True
 
 # Details Page
 def show_detail_page(movie_id: int, movie_title: str):
@@ -186,30 +192,19 @@ def select_movie(movie_id, movie_title):
 def show_main_page():
     st.title("🎬 Movie Recommender System")
 
-    selected = st.selectbox(
+    st.selectbox(
         "Type or select a movie",
         movies['title'].values,
         index=None,
-        placeholder="Search for a movie…"
+        placeholder="Search for a movie…",
+        key="movie_selectbox"        # ← key is important here
     )
 
-    if st.button("Recommend") and selected:
-        names, posters, ids = recommend(selected)
-
-        st.markdown("### Recommended Movies")
-        st.markdown("*Click on any movie to see its full details and more recommendations*")
-
-        cols = st.columns(5)
-        for col, name, poster, mid in zip(cols, names, posters, ids):
-            with col:
-                st.image(poster, use_container_width=True)
-                st.button(
-                    name,
-                    key=f"main_{mid}",
-                    on_click=select_movie,
-                    args=(mid, name),
-                    use_container_width=True
-                )
+    st.button(
+        "Recommend",
+        on_click=go_to_movie,        # ← callback, no rerun needed
+        use_container_width=True
+    )
 
 
 if st.session_state.selected_movie_id:
