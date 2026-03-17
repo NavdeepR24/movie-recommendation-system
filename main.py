@@ -197,13 +197,12 @@ def show_main_page():
         movies['title'].values,
         index=None,
         placeholder="Search for a movie…",
-        key="movie_selectbox"        # ← key is important here
+        key="movie_selectbox"
     )
 
     st.button(
         "Recommend",
-        on_click=go_to_movie,        # ← callback, no rerun needed
-        use_container_width=True
+        on_click=go_to_movie,
     )
 
 
