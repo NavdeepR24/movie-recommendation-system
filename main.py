@@ -12,37 +12,40 @@ st.set_page_config(page_title="Movie Recommender", layout="wide")
 
 # Access your API key
 tmdb_api_key = os.getenv("TMDB_API_KEY")
-
 TMDB_BASE    = "https://api.themoviedb.org/3"
 POSTER_BASE  = "https://image.tmdb.org/t/p/w500"
+placeholder = "https://via.placeholder.com/500x750?text=No+Poster"
 
 # Load data
-movies_list=pickle.load(open('movie_dict.pkl', 'rb'))
-movies=pd.DataFrame(movies_list)
-similarity=pickle.load(open('similarity.pkl', 'rb'))
+movies = pd.DataFrame(pickle.load(open('movie_dict.pkl', 'rb')))
+similarity = pickle.load(open('similarity.pkl', 'rb'))
+
+# Session State
+if 'selected_movie_id' not in st.session_state:
+    st.session_state.selected_movie_id    = None
+if 'selected_movie_title' not in st.session_state:
+    st.session_state.selected_movie_title = None
 
 
-def fetch_poster(movie_id: int) -> str:
+def build_poster_url(path: str) -> str:
+    return (POSTER_BASE + path) if path else placeholder
+
+def fetch_poster(movie_id):
     url = f"{TMDB_BASE}/movie/{movie_id}?api_key={tmdb_api_key}"
     r = requests.get(url)
     if r.status_code == 200:
-        data = r.json()
-        path = data.get("poster_path")
-        if path:
-            return POSTER_BASE + path
-    return "https://via.placeholder.com/500x750?text=No+Poster"
+        return build_poster_url(r.json().get("poster_path", ""))
+    return placeholder
 
-def fetch_movie_details(movie_id: int) -> dict:
-    """Return full movie details + credits + videos from TMDb."""
+def fetch_movie_details(movie_id):
     details = requests.get(
         f"{TMDB_BASE}/movie/{movie_id}",
-        params={"api_key": tmdb_api_key, "append_to_response": "credits,videos,keywords"}
-    ).json()
-    return details
+        params={"api_key": tmdb_api_key, "append_to_response": "credits,videos"}
+    )
+    return details.json() if details.status_code == 200 else {}
 
 #Recommender logic
 def recommend(movie_title):
-    """Return 5 (name, poster_url, tmdb_id) tuples."""
     match = movies[movies['title'] == movie_title]
     if match.empty:
         return [], [], []
@@ -57,30 +60,34 @@ def recommend(movie_title):
         ids.append(mid)
     return names, posters, ids
 
-# Session State
-if 'selected_movie_id' not in st.session_state:
-    st.session_state.selected_movie_id    = None
-if 'selected_movie_title' not in st.session_state:
-    st.session_state.selected_movie_title = None
+def select_movie(movie_id, movie_title):
+    st.session_state.selected_movie_id = movie_id
+    st.session_state.selected_movie_title = movie_title
 
 def go_back():
     st.session_state.selected_movie_id = None
     st.session_state.selected_movie_title = None
 
 def go_to_movie():
-    if st.session_state.movie_selectbox:
-        movie_row = movies[movies['title'] == st.session_state.movie_selectbox].iloc[0]
-        st.session_state.selected_movie_id = int(movie_row['movie_id'])
-        st.session_state.selected_movie_title = st.session_state.movie_selectbox
-        st.session_state.scroll_to_top = True
+    title = st.session_state.get("movie_selectbox")
+    if not title:
+        return
+    row = movies[movies['title'] == title]
+    if not row.empty:
+        select_movie(int(row.iloc[0]['movie_id']), title)
+
 
 # Details Page
 def show_detail_page(movie_id: int, movie_title: str):
     st.button("← Back to Search", on_click=go_back)
 
     details = fetch_movie_details(movie_id)
-    poster_path = details.get("poster_path")
-    poster = (POSTER_BASE + poster_path) if poster_path else "https://via.placeholder.com/500x750?text=No+Poster"
+    if not details:
+        st.error("Could not load movie details. Please try again.")
+        return
+
+    poster = build_poster_url(details.get("poster_path",""))
+
 
     col_poster, col_info = st.columns([1, 2])
 
@@ -185,9 +192,6 @@ def show_detail_page(movie_id: int, movie_title: str):
     else:
         st.info("Recommendations not available for this movie in the local dataset.")
 
-def select_movie(movie_id, movie_title):
-    st.session_state.selected_movie_id = movie_id
-    st.session_state.selected_movie_title = movie_title
 
 def show_main_page():
     st.title("🎬 Movie Recommender System")
