@@ -8,7 +8,7 @@ import os
 load_dotenv()
 
 # Page config.
-st.set_page_config(page_title="Movie Recommender", layout="wide")
+st.set_page_config(page_title="Movie Recommendation System", layout="wide")
 
 # Access your API key
 tmdb_api_key = os.getenv("TMDB_API_KEY")
@@ -194,7 +194,7 @@ def show_detail_page(movie_id: int, movie_title: str):
 
 
 def show_main_page():
-    st.title("🎬 Movie Recommender System")
+    st.title("🎬 Movie Recommendation System")
 
     st.selectbox(
         "Type or select a movie",
