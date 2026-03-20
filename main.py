@@ -26,6 +26,7 @@ if 'selected_movie_id' not in st.session_state:
 if 'selected_movie_title' not in st.session_state:
     st.session_state.selected_movie_title = None
 
+#helping functions
 
 def build_poster_url(path: str) -> str:
     return (POSTER_BASE + path) if path else placeholder
@@ -155,7 +156,7 @@ def show_detail_page(movie_id: int, movie_title: str):
 
     st.divider()
 
-    # ── Budget / Revenue ──────────────────────────────────────────────────────
+    # Budget / Revenue
     budget = details.get("budget", 0)
     revenue = details.get("revenue", 0)
     if budget or revenue:
@@ -166,7 +167,7 @@ def show_detail_page(movie_id: int, movie_title: str):
             b2.metric("💵 Revenue", f"${revenue:,.0f}")
         st.divider()
 
-    # ── Recommendations based on THIS movie ──────────────────────────────────
+    # Recommendations based on THIS movie
     st.markdown("## 🎬 You Might Also Like")
 
     # Look up this movie in our local dataset by tmdb id or title
