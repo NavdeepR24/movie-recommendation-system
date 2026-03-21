@@ -7,7 +7,7 @@ import os
 
 load_dotenv()
 
-# Page config.
+# Page configuration
 st.set_page_config(page_title="Movie Recommendation System", layout="wide")
 
 # Access your API key
