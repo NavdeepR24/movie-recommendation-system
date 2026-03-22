@@ -27,7 +27,6 @@ if 'selected_movie_title' not in st.session_state:
     st.session_state.selected_movie_title = None
 
 #helping functions
-
 def build_poster_url(path: str) -> str:
     return (POSTER_BASE + path) if path else placeholder
 
@@ -210,7 +209,7 @@ def show_main_page():
         on_click=go_to_movie,
     )
 
-
+#Actual starting point
 if st.session_state.selected_movie_id:
     show_detail_page(
         st.session_state.selected_movie_id,
