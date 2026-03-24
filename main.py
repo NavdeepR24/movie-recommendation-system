@@ -17,8 +17,8 @@ POSTER_BASE  = "https://image.tmdb.org/t/p/w500"
 placeholder = "https://via.placeholder.com/500x750?text=No+Poster"
 
 # Load data
-movies = pd.DataFrame(pickle.load(open('movie_dict.pkl', 'rb')))
-similarity = pickle.load(open('similarity.pkl', 'rb'))
+movies = pd.DataFrame(pickle.load(open('data/movie_dict.pkl', 'rb')))
+similarity = pickle.load(open('data/similarity.pkl', 'rb'))
 
 # Session State
 if 'selected_movie_id' not in st.session_state:
