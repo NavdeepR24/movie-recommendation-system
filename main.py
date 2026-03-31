@@ -101,7 +101,7 @@ def show_detail_page(movie_id: int, movie_title: str):
         if tagline:
             st.markdown(f"*{tagline}*")
 
-        # Rating + meta row
+        # Rating
         vote = details.get("vote_average", 0)
         votes_n = details.get("vote_count", 0)
         runtime = details.get("runtime", 0)
